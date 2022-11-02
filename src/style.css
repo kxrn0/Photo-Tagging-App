@@ -1,0 +1,101 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.App {
+    padding-top: 7rem;
+    position: relative;
+}
+
+.App .main-image {
+    width: 100vw;
+}
+
+.App.pointer-on {
+    cursor: none;
+}
+
+.App.pointer-on * {
+    cursor: none;
+}
+
+.App .characters-menu {
+    background: rgb(255, 53, 53, 0.65);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    /* width: 12rem; */
+}
+
+.App .characters-menu.hidden {
+    top: -10rem;
+    left: -10rem;
+}
+
+.App .characters-menu button {
+    background: rgb(231, 255, 135, 0.85);
+    color: rgb(17, 15, 15);
+    font-size: 0.95rem;
+    padding: 0.5rem;
+    border: none;
+}
+
+.App .characters-menu button:not(:last-child) {
+    border-bottom: 1px solid red;
+}
+
+.App .characters-menu button:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+
+.App .characters-menu button:last-child {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.App .initial-screen-characters {
+    background: rgba(119, 175, 216, 0.85);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.App .initial-screen-characters .instructions {
+    color: azure;
+    font-size: 2rem;
+}
+
+.App .initial-screen-characters .characters-to-find {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.App .initial-screen-characters .start-button {
+    background: rgb(163, 239, 156);
+    padding: 0.5rem 2rem;
+    font-size: 1.35rem;
+    border-radius: 0.25rem;
+    border: none;
+}
+
+@media screen and (max-width: 600px) {
+    .App {
+        padding: 0;
+    }
+
+    .App .initial-screen-characters .characters-to-find {
+        width: 20rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

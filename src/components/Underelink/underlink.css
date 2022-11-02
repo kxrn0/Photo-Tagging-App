@@ -1,0 +1,24 @@
+.underlink {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.underlink a {
+    text-decoration: none;
+    color: rgb(14, 52, 87);
+}
+
+.underlink span {
+    background: rgb(199, 50, 43);
+    display: block;
+    width: 0;
+    height: 2px;
+    transition: width 0.33s;
+    pointer-events: none;
+}
+
+@media screen and (hover: hover) {
+    .underlink a:hover + span {
+        width: 100%;
+    }
+}

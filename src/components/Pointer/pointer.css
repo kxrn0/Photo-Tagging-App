@@ -1,0 +1,47 @@
+.pointer.active {
+    --diameter: 3.5rem;
+    --line-length: var(--diameter);
+    --line-thickness: 3px;
+    --offset: calc(var(--diameter) / 2 - var(--line-thickness) / 2);
+    --background: rgb(235, 50, 150, 0.5);
+    background: rgb(245, 240, 200, 0.75);
+    width: var(--diameter);
+    height: var(--diameter);
+    border-radius: 100%;
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    outline: 2px dashed azure;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.pointer.active::before,
+.pointer.active::after {
+    content: "";
+    background: var(--background);
+    border-radius: calc(2 * var(--line-thickness));
+    position: absolute;
+}
+
+.pointer.active::before {
+    left: var(--offset);
+    width: var(--line-thickness);
+    height: var(--line-length);
+}
+
+.pointer.active::after {
+    top: var(--offset);
+    width: var(--line-length);
+    height: var(--line-thickness);
+}
+
+@media screen and (max-width: 600px) {
+    .pointer {
+        display: none;
+    }
+
+    .pointer.active {
+        display: none;
+    }
+}

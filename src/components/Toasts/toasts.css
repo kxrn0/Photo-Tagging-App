@@ -1,0 +1,62 @@
+.toasts {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  padding: 1rem;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.toast {
+  --toast-width: 20rem;
+  width: var(--toast-width);
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 0.3rem;
+  pointer-events: all;
+}
+
+.toast.error {
+  background: rgb(252, 113, 113);
+  color: azure;
+}
+
+.toast.success {
+  background: rgb(22, 248, 22);
+  color: rgb(33, 77, 77);
+}
+
+.toast .close-toast {
+  background: transparent;
+  display: grid;
+  place-items: center;
+  border: none;
+}
+
+.toast .close-toast svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (hover: hover) {
+  .toast .close-toast:hover {
+    border-radius: 0.25rem;
+    transition: background-color 0.15s;
+  }
+
+  .toast.error .close-toast:hover {
+    background: rgb(231, 243, 243, 0.5);
+  }
+
+  .toast.success .close-toast:hover {
+    background: rgba(154, 184, 184, 0.5);
+  }
+}
+

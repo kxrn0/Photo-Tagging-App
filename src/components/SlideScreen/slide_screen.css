@@ -1,0 +1,31 @@
+.slide-screen {
+    background: rgba(33, 53, 65, 0.75);
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: top 0.33s;
+    width: 100vw;
+    height: 100vh;
+    z-index: 3;
+}
+
+/* .slide-screen .close-screen {
+    background-color: rgb(21, 4, 4);
+    background-image: url("../../assets/close.svg");
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 100%;
+} */
+
+.slide-screen.hidden {
+    top: -125%;
+}
+
+.slide-screen.shown {
+    top: 0;
+}

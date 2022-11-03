@@ -6,6 +6,8 @@ export default function Navbar({ characters, user }) {
     const [shown, setShown] = useState(false);
 
     function fill_chars(cond) {
+        if (characters.some((char) => !char.image)) return null;
+
         return characters.map((chara) =>
             cond(chara.found) ? (
                 <CharacterProfile key={chara.name} character={chara} />

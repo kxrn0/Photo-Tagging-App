@@ -38,4 +38,8 @@ const data = [
     }
 ];
 
+export function get_image_url(char) {
+    return data.find(item => item.name === char).image;
+}
+
 export default data;

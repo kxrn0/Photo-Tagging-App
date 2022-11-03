@@ -9,6 +9,9 @@
 .App {
     padding-top: 7rem;
     position: relative;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 .App .main-image {
@@ -30,12 +33,6 @@
     flex-direction: column;
     padding: 1rem;
     border-radius: 0.5rem;
-    /* width: 12rem; */
-}
-
-.App .characters-menu.hidden {
-    top: -10rem;
-    left: -10rem;
 }
 
 .App .characters-menu button {
@@ -73,6 +70,11 @@
 .App .initial-screen-characters .instructions {
     color: azure;
     font-size: 2rem;
+}
+
+.App .initial-screen-characters .details {
+    color: azure;
+    font-size: .95rem;
 }
 
 .App .initial-screen-characters .characters-to-find {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import touhou from "./assets/yoki.jpg";
 import data from "./data";
+// import names from "./names";
 import Navbar from "./components/Navbar/Navbar";
 import SlideScreen from "./components/SlideScreen/SlideScreen";
 import CharacterProfile from "./components/CharacterProfile/CharacterProfile";
@@ -13,35 +14,155 @@ import { nanoid } from "nanoid";
 
 let stuff = [
     {
+        name: "Reimu Hakurei",
+        position: {
+            x: 0.079,
+            y: 0.181,
+            r: 0.0425,
+        },
+    },
+    {
+        name: "Marisa Kirisame",
+        position: {
+            x: 0.327,
+            y: 0.046,
+            r: 0.05,
+        },
+    },
+    {
         name: "Cirno",
-        position: { x: 0.1, y: 0.2, r: 0.1 },
+        position: {
+            x: 0.145,
+            y: 0.264,
+            r: 0.04,
+        },
     },
     {
-        name: "Flandre Scarlet",
-        position: { x: 0.5, y: 0.6, r: 0.15 },
+        name: "Rumia",
+        position: {
+            x: 0.528,
+            y: 0.26,
+            r: 0.04,
+        },
     },
     {
-        name: "Mima",
-        position: { x: 0.607, y: 0.027, r: 0.0425 },
+        name: "Alice Margatroid",
+        position: {
+            x: 0.531,
+            y: 0.094,
+            r: 0.0425,
+        },
+    },
+    {
+        name: "Chen",
+        position: {
+            x: 0.195,
+            y: 0.145,
+            r: 0.035,
+        },
+    },
+    {
+        name: "Yukari Yakumo",
+        position: {
+            x: 0.122,
+            y: 0.14,
+            r: 0.04,
+        },
+    },
+    {
+        name: "Kasen Ibaraki",
+        position: {
+            x: 0.469,
+            y: 0.89,
+            r: 0.045,
+        },
+    },
+    {
+        name: "Suika Ibuki",
+        position: {
+            x: 0.319,
+            y: 0.953,
+            r: 0.0475,
+        },
+    },
+    {
+        name: "Mamizou Futatsuiwa",
+        position: {
+            x: 0.472,
+            y: 0.141,
+            r: 0.045,
+        },
+    },
+    {
+        name: "Nitori Kawashiro",
+        position: {
+            x: 0.289,
+            y: 0.618,
+            r: 0.0375,
+        },
     },
 ];
 
+const names = [
+    "Reimu Hakurei",
+    "Marisa Kirisame",
+    "Cirno",
+    "Rumia",
+    "Alice Margatroid",
+    "Chen",
+    "Kasen Ibaraki",
+    "Suika Ibuki",
+    "Mamizou Futatsuiwa",
+    "Nitori Kawashiro",
+    "Yukari Yakumo",
+];
+
+import { get_image_url } from "./image_data";
+import Loading from "./components/Loading/Loading";
+
 function App() {
     const [startScreenIsShown, setStartScreenIsShown] = useState(true);
-    const [chars, setChars] = useState(
-        JSON.parse(JSON.stringify(data)).map((char) => ({
-            ...char,
-            found: false,
-        }))
-    );
+    const [chars, setChars] = useState(() => {
+        const characters = [];
+
+        do {
+            const char = names[~~(Math.random() * names.length)];
+
+            if (!characters.includes(char)) characters.push(char);
+        } while (characters.length < 5);
+        return characters;
+    });
     const [pointerOn, setPointerOn] = useState(false);
     const imageRef = useRef(null);
     const menuRef = useRef(null);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: -1000 });
+    const [mouser, setMouser] = useState({ x: 0, y: 0 });
     const [toasts, setToasts] = useState([]);
 
+    useEffect(() => {
+        async function get_character_data() {
+            let updatedChars = [];
+
+            for (let char of chars) {
+                const imageURL = await get_image_url(char);
+
+                updatedChars.push({
+                    name: char,
+                    address: `https://en.touhouwiki.net/wiki/${char
+                        .split(" ")
+                        .join("_")}`,
+                    image: imageURL,
+                    found: false,
+                });
+            }
+
+            setChars(updatedChars);
+        }
+
+        get_character_data();
+    }, []);
+
     function start_game() {
-        console.log("hi");
         setStartScreenIsShown(false);
         if (window.innerWidth >= 550) setPointerOn(true);
     }
@@ -81,7 +202,7 @@ function App() {
         };
         const radius = imageRef.current.width * location.r;
         const yOffset = rem_to_pixels(window.innerWidth > 600 ? 7 : 0);
-        const mouseCoords = { x: menuPosition.x, y: menuPosition.y - yOffset };
+        const mouseCoords = { x: mouser.x, y: mouser.y - yOffset };
         const id = nanoid();
 
         if (is_point_in_circle(mouseCoords, { center, radius })) {
@@ -90,13 +211,11 @@ function App() {
                     other.name === charName ? { ...other, found: true } : other
                 )
             );
-            console.log("correct");
             setToasts((prevToasts) => [
                 ...prevToasts,
                 { error: false, message: "Correct!", id },
             ]);
         } else {
-            console.log("wrong");
             setToasts((prevToasts) => [
                 ...prevToasts,
                 { error: true, message: "Incorrect, please try again!", id },
@@ -119,7 +238,6 @@ function App() {
 
             if (pointerOn) {
                 const position = { x: event.pageX, y: event.pageY };
-
                 const styles = window.getComputedStyle(menuRef.current);
                 const menuWidth = parseFloat(styles.width);
                 const menuHeight = parseFloat(styles.height);
@@ -130,6 +248,7 @@ function App() {
                     position.y = event.pageY - menuHeight;
 
                 setMenuPosition(position);
+                setMouser({ x: event.pageX, y: event.pageY });
             } else {
                 setMenuPosition({ x: -9999, y: -9999 });
             }
@@ -147,34 +266,50 @@ function App() {
             <div
                 className={`characters-menu ${pointerOn ? "hidden" : ""}`}
                 ref={menuRef}
-                style={{ top: menuPosition.y, left: menuPosition.x }}
+                style={
+                    pointerOn
+                        ? {
+                              top: "-10rem",
+                              left: "-10rem",
+                          }
+                        : { top: menuPosition.y, left: menuPosition.x }
+                }
             >
-                {chars
-                    .filter((char) => !char.found)
-                    .map((char) => (
-                        <button
-                            key={char.name}
-                            onClick={() => check_coordinates(char.name)}
-                        >
-                            {char.name}
-                        </button>
-                    ))}
+                {chars.every((char) => char.image)
+                    ? chars
+                          .filter((char) => !char.found)
+                          .map((char) => (
+                              <button
+                                  key={char.name}
+                                  onClick={() => check_coordinates(char.name)}
+                              >
+                                  {char.name}
+                              </button>
+                          ))
+                    : null}
             </div>
             <SlideScreen shown={startScreenIsShown} close={start_game}>
-                <div className="initial-screen-characters">
-                    <p className="instructions">Find these characters</p>
-                    <div className="characters-to-find">
-                        {chars.map((char) => (
-                            <CharacterProfile
-                                key={char.name}
-                                character={char}
-                            />
-                        ))}
+                {chars.every((char) => char.image) ? (
+                    <div className="initial-screen-characters">
+                        <p className="instructions">Find these characters</p>
+                        <p className="details">
+                            Click on each character's head to select them
+                        </p>
+                        <div className="characters-to-find">
+                            {chars.map((char) => (
+                                <CharacterProfile
+                                    key={char.name}
+                                    character={char}
+                                />
+                            ))}
+                        </div>
+                        <button onClick={start_game} className="start-button">
+                            START
+                        </button>
                     </div>
-                    <button onClick={start_game} className="start-button">
-                        START
-                    </button>
-                </div>
+                ) : (
+                    <Loading />
+                )}
             </SlideScreen>
             <Navbar
                 characters={chars}

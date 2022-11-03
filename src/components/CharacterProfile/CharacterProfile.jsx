@@ -6,7 +6,7 @@ export default function CharacterProfile({ character }) {
     return (
         <div className={`character-profile ${character.found ? "found" : ""}`}>
             <img src={character.image} alt={character.name} />
-            <Underlink address={character.link}>{character.name}</Underlink>
+            <Underlink address={character.address}>{character.name}</Underlink>
         </div>
     );
 }

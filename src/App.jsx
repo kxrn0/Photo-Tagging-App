@@ -1,107 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
 import touhou from "./assets/yoki.jpg";
-import data from "./data";
-// import names from "./names";
 import Navbar from "./components/Navbar/Navbar";
 import SlideScreen from "./components/SlideScreen/SlideScreen";
 import CharacterProfile from "./components/CharacterProfile/CharacterProfile";
 import Pointer from "./components/Pointer/Pointer";
 import Toasts from "./components/Toasts/Toasts";
 
+import { initializeApp } from "firebase/app";
+
 import "./style.css";
 import { nanoid } from "nanoid";
-
-let stuff = [
-    {
-        name: "Reimu Hakurei",
-        position: {
-            x: 0.079,
-            y: 0.181,
-            r: 0.0425,
-        },
-    },
-    {
-        name: "Marisa Kirisame",
-        position: {
-            x: 0.327,
-            y: 0.046,
-            r: 0.05,
-        },
-    },
-    {
-        name: "Cirno",
-        position: {
-            x: 0.145,
-            y: 0.264,
-            r: 0.04,
-        },
-    },
-    {
-        name: "Rumia",
-        position: {
-            x: 0.528,
-            y: 0.26,
-            r: 0.04,
-        },
-    },
-    {
-        name: "Alice Margatroid",
-        position: {
-            x: 0.531,
-            y: 0.094,
-            r: 0.0425,
-        },
-    },
-    {
-        name: "Chen",
-        position: {
-            x: 0.195,
-            y: 0.145,
-            r: 0.035,
-        },
-    },
-    {
-        name: "Yukari Yakumo",
-        position: {
-            x: 0.122,
-            y: 0.14,
-            r: 0.04,
-        },
-    },
-    {
-        name: "Kasen Ibaraki",
-        position: {
-            x: 0.469,
-            y: 0.89,
-            r: 0.045,
-        },
-    },
-    {
-        name: "Suika Ibuki",
-        position: {
-            x: 0.319,
-            y: 0.953,
-            r: 0.0475,
-        },
-    },
-    {
-        name: "Mamizou Futatsuiwa",
-        position: {
-            x: 0.472,
-            y: 0.141,
-            r: 0.045,
-        },
-    },
-    {
-        name: "Nitori Kawashiro",
-        position: {
-            x: 0.289,
-            y: 0.618,
-            r: 0.0375,
-        },
-    },
-];
 
 const names = [
     "Reimu Hakurei",
@@ -117,66 +26,53 @@ const names = [
     "Yukari Yakumo",
 ];
 
-import { get_image_url } from "./image_data";
 import Loading from "./components/Loading/Loading";
+import Underlink from "./components/Underelink/Underlink";
+
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    getFirestore,
+    orderBy,
+    query,
+    limit,
+} from "firebase/firestore";
+import config from "./firebase.config";
 
 function App() {
     const [startScreenIsShown, setStartScreenIsShown] = useState(true);
-    const [chars, setChars] = useState(() => {
-        const characters = [];
-
-        do {
-            const char = names[~~(Math.random() * names.length)];
-
-            if (!characters.includes(char)) characters.push(char);
-        } while (characters.length < 5);
-        return characters;
-    });
+    const [chars, setChars] = useState(select_characters);
     const [pointerOn, setPointerOn] = useState(false);
     const imageRef = useRef(null);
     const menuRef = useRef(null);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: -1000 });
     const [mouser, setMouser] = useState({ x: 0, y: 0 });
     const [toasts, setToasts] = useState([]);
-
-    useEffect(() => {
-        async function get_character_data() {
-            let updatedChars = [];
-
-            for (let char of chars) {
-                const imageURL = await get_image_url(char);
-
-                updatedChars.push({
-                    name: char,
-                    address: `https://en.touhouwiki.net/wiki/${char
-                        .split(" ")
-                        .join("_")}`,
-                    image: imageURL,
-                    found: false,
-                });
-            }
-
-            setChars(updatedChars);
-        }
-
-        get_character_data();
-    }, []);
+    const [isShowingCredits, setIsShowingCredits] = useState(false);
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [userIn, setUserIn] = useState(false);
+    const [leaderBoard, setLeaderboard] = useState([]);
+    const [time, setTime] = useState({ start: 0, end: 0 });
+    const formRef = useRef(null);
 
     function start_game() {
         setStartScreenIsShown(false);
+        setIsGameOver(false);
+        setTime({ start: new Date(), end: 0 });
         if (window.innerWidth >= 550) setPointerOn(true);
     }
 
-    function get_data(charName) {
-        return new Promise((resolve) =>
-            setTimeout(
-                () =>
-                    resolve(
-                        stuff.find((char) => char.name === charName).position
-                    ),
-                50
-            )
+    async function get_data(charName) {
+        const charRef = doc(
+            getFirestore(),
+            `location/${charName.split(" ").join("_")}`
         );
+        const charSnap = await getDoc(charRef);
+
+        return charSnap.data().position;
     }
 
     function rem_to_pixels(rem) {
@@ -206,11 +102,20 @@ function App() {
         const id = nanoid();
 
         if (is_point_in_circle(mouseCoords, { center, radius })) {
-            setChars((prevChars) =>
-                prevChars.map((other) =>
+            setChars((prevChars) => {
+                const updated = prevChars.map((other) =>
                     other.name === charName ? { ...other, found: true } : other
-                )
-            );
+                );
+
+                if (updated.every((char) => char.found)) {
+                    setTime((prevTime) => ({
+                        ...prevTime,
+                        end: new Date(),
+                    }));
+                    setIsGameOver(true);
+                }
+                return updated;
+            });
             setToasts((prevToasts) => [
                 ...prevToasts,
                 { error: false, message: "Correct!", id },
@@ -231,6 +136,88 @@ function App() {
             prevToasts.filter((toast) => toast.id !== id)
         );
     }
+
+    function open_info() {
+        setIsShowingCredits(true);
+    }
+
+    async function handle_submission(event) {
+        event.preventDefault();
+
+        const userName = formRef.current["player-name"].value;
+        const id = nanoid();
+        const topUsers = [];
+
+        await addDoc(collection(getFirestore(), "users"), {
+            name: userName,
+            time: time.end.valueOf() - time.start.valueOf(),
+            id,
+        });
+
+        const usersQuery = query(
+            collection(getFirestore(), "users"),
+            orderBy("time", "asc"),
+            limit(10)
+        );
+        const querySnapshot = await getDocs(usersQuery);
+
+        querySnapshot.forEach((user) => topUsers.push(user.data()));
+
+        console.log(topUsers);
+
+        setLeaderboard(topUsers);
+
+        setUserIn(true);
+    }
+
+    async function load_characters_data(chars) {
+        let updatedCharacters = [];
+
+        for (let char of chars) {
+            const charRef = doc(
+                getFirestore(),
+                `image_data/${char.split(" ").join("_")}`
+            );
+            const charSnap = await getDoc(charRef);
+
+            updatedCharacters.push({
+                ...charSnap.data(),
+                address: `https://en.touhouwiki.net/wiki/${char
+                    .split(" ")
+                    .join("_")}`,
+                found: false,
+            });
+        }
+
+        setChars(updatedCharacters);
+    }
+
+    function select_characters() {
+        const characters = [];
+
+        do {
+            const char = names[~~(Math.random() * names.length)];
+
+            if (!characters.includes(char)) characters.push(char);
+        } while (characters.length < 5);
+        return characters;
+    }
+
+    function play_again() {
+        const newChars = select_characters();
+
+        setChars(newChars);
+        load_characters_data(newChars);
+
+        setUserIn(false);
+        setStartScreenIsShown(true);
+        setIsGameOver(false);
+    }
+
+    useState(() => {
+        initializeApp(config);
+        load_characters_data(chars);
+    }, []);
 
     useEffect(() => {
         function fun(event) {
@@ -269,8 +256,8 @@ function App() {
                 style={
                     pointerOn
                         ? {
-                              top: "-10rem",
-                              left: "-10rem",
+                              top: "-100rem",
+                              left: "-100rem",
                           }
                         : { top: menuPosition.y, left: menuPosition.x }
                 }
@@ -288,7 +275,48 @@ function App() {
                           ))
                     : null}
             </div>
-            <SlideScreen shown={startScreenIsShown} close={start_game}>
+            <SlideScreen
+                shown={isShowingCredits}
+                close={() => setIsShowingCredits(false)}
+                closeButton={true}
+                closeWhenClickingOutside={true}
+            >
+                {chars.every((char) => char.image) ? (
+                    <div className="credits">
+                        <p>
+                            Background Image:
+                            <Underlink
+                                address={
+                                    "https://www.pixiv.net/en/artworks/32372526"
+                                }
+                            >
+                                フウザサ
+                            </Underlink>
+                        </p>
+                        <div className="charedits">
+                            {chars.map((char) => (
+                                <div key={char.name} className="char">
+                                    <img src={char.image} alt={char.name} />
+                                    <Underlink address={char.sauce}>
+                                        Source
+                                    </Underlink>
+                                </div>
+                            ))}
+                        </div>
+                        <Underlink address={"https://github.com/kxrn0"}>
+                            @kxrn0
+                        </Underlink>
+                    </div>
+                ) : (
+                    <Loading />
+                )}
+            </SlideScreen>
+            <SlideScreen
+                shown={startScreenIsShown}
+                close={start_game}
+                closeButton={false}
+                closeWhenClickingOutside={false}
+            >
                 {chars.every((char) => char.image) ? (
                     <div className="initial-screen-characters">
                         <p className="instructions">Find these characters</p>
@@ -311,9 +339,44 @@ function App() {
                     <Loading />
                 )}
             </SlideScreen>
+            <SlideScreen
+                shown={isGameOver}
+                close={() => console.log("open")}
+                closeButton={false}
+                closeWhenClickingOutside={false}
+            >
+                {userIn ? (
+                    <div className="leaderboard">
+                        {leaderBoard.map((player) => (
+                            <div key={player.id} className="player">
+                                <p>{player.name}</p>
+                                <p>{player.time}</p>
+                            </div>
+                        ))}
+                        <button onClick={play_again}>Play Again</button>
+                    </div>
+                ) : (
+                    <form
+                        className="name-form"
+                        ref={formRef}
+                        onSubmit={handle_submission}
+                    >
+                        <label htmlFor="player-name">
+                            <span>Name: </span>
+                            <input
+                                type="text"
+                                id="player-name"
+                                name="player-name"
+                            />
+                        </label>
+                        <button type="submit">Submit</button>
+                    </form>
+                )}
+            </SlideScreen>
             <Navbar
                 characters={chars}
                 user={{ name: "By Me", loggedIn: false }}
+                open_info={open_info}
             />
             <main>
                 <img

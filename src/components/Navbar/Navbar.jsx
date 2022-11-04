@@ -1,8 +1,14 @@
 import { useState } from "react";
 import CharacterProfile from "../CharacterProfile/CharacterProfile";
+import Icon from "@mdi/react";
+import {
+    mdiInformation,
+    mdiCloseCircle,
+    mdiDotsHorizontalCircle,
+} from "@mdi/js";
 import "./navbar.css";
 
-export default function Navbar({ characters, user }) {
+export default function Navbar({ characters, open_info }) {
     const [shown, setShown] = useState(false);
 
     function fill_chars(cond) {
@@ -17,12 +23,15 @@ export default function Navbar({ characters, user }) {
 
     return (
         <nav className={`navbar ${shown ? "" : "hidden"}`}>
-            <input
-                type="checkbox"
-                className="sidebar-control"
-                checked={shown}
-                onChange={(event) => setShown(event.target.checked)}
-            />
+            <div className="sidebar-control-wrapper">
+                <Icon path={shown ? mdiCloseCircle : mdiDotsHorizontalCircle} />
+                <input
+                    type="checkbox"
+                    className="sidebar-control"
+                    checked={shown}
+                    onChange={(event) => setShown(event.target.checked)}
+                />
+            </div>
             <div className="characters">
                 <div className="characters-container">
                     {fill_chars((b) => b)}
@@ -32,10 +41,9 @@ export default function Navbar({ characters, user }) {
                     {fill_chars((b) => !b)}
                 </div>
             </div>
-            <button
-                className="log-out"
-                onClick={() => console.log("log out")}
-            ></button>
+            <button className="nav-button" onClick={open_info}>
+                <Icon path={mdiInformation} />
+            </button>
         </nav>
     );
 }

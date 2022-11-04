@@ -12,7 +12,7 @@
     height: 7rem;
 }
 
-.navbar .sidebar-control {
+.navbar .sidebar-control-wrapper {
     display: none;
 }
 
@@ -33,12 +33,15 @@
     border-radius: 10px;
 }
 
-.navbar .log-out {
-    background-image: url("../../assets/logout.svg");
+.navbar .nav-button {
     background-color: transparent;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
     border: none;
+}
+
+.navbar .nav-button {
+    color: rgb(198, 60, 60);
 }
 
 @media screen and (max-width: 600px) {
@@ -57,23 +60,31 @@
         left: -80%;
     }
 
-    .navbar .sidebar-control {
-        appearance: none;
-        background-image: url("../../assets/open.svg");
-        filter: invert(64%) sepia(99%) saturate(2291%) hue-rotate(284deg)
-            brightness(94%) contrast(97%);
+    .navbar .sidebar-control-wrapper {
         display: block;
+        width: 1.5rem;
+        height: 1.5rem;
         position: absolute;
         right: -2rem;
         top: 1rem;
-        width: 1.5rem;
-        height: 1.5rem;
-        border-radius: 0.25rem;
         transition: right 0.33s;
     }
 
+    .navbar .sidebar-control {
+        background: rgb(54, 4, 4, 0.5);
+        appearance: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+    }
+
+    .navbar .sidebar-control-wrapper svg {
+        position: absolute;
+        pointer-events: none;
+        color: rgb(252, 252, 161);
+    }
+
     .navbar .sidebar-control:checked {
-        background-image: url("../../assets/close.svg");
         right: 0.5rem;
     }
 

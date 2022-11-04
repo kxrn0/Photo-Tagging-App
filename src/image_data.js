@@ -25,55 +25,67 @@ import yakumoYukari from "./assets/characters/yakumo_yukari.jpg"
 const images = [
     {
         name: "Cirno",
-        image: cirno
+        image: cirno,
+        sauce: "https://twitter.com/coco_1758/status/1555922787356839938"
     },
     {
         name: "Reimu Hakurei",
-        image: reimu
+        image: reimu,
+        sauce: "https://twitter.com/hacoho378/status/1558348750447263744"
+
     },
     {
         name: "Marisa Kirisame",
-        image: marisa
+        image: marisa,
+        sauce: "https://www.pixiv.net/en/artworks/100691924"
     },
     {
         name: "Rumia",
-        image: rumia
+        image: rumia,
+        sauce: "https://twitter.com/e_sdss/status/1520392516519927808"
     },
     {
         name: "Alice Margatroid",
-        image: alice
+        image: alice,
+        sauce: "https://twitter.com/e_sdss/status/1550855339083321344"
     },
     {
         name: "Chen",
-        image: chen
+        image: chen,
+        sauce: "https://twitter.com/e_sdss/status/1529470330049179648"
     },
     {
         name: "Kasen Ibaraki",
-        image: ibarakiKasen
+        image: ibarakiKasen,
+        sauce: "https://twitter.com/e_sdss/status/1548681531324977152"
     }
     ,
     {
         name: "Suika Ibuki",
-        image: ibukiSuika
+        image: ibukiSuika,
+        sauce: "https://twitter.com/syoboikarasu/status/1500962048863129602"
     },
     {
         name: "Mamizou Futatsuiwa",
-        image: futatsuiwaMamizou
+        image: futatsuiwaMamizou,
+        sauce: "https://www.pixiv.net/en/artworks/67462004"
     },
     {
         name: "Nitori Kawashiro",
-        image: kawashiroNitori
+        image: kawashiroNitori,
+        sauce: "https://www.pixiv.net/artworks/102392400"
     },
     {
         name: "Yukari Yakumo",
-        image: yakumoYukari
+        image: yakumoYukari,
+        sauce: "https://twitter.com/e_sdss/status/1541071693833113600"
     }
 ];
 
 export function get_image_url(char) {
     return new Promise((resolve) =>
         setTimeout(
-            () => resolve(images.find((item) => item.name === char).image),
+            () => resolve(images.find((item) => item.name === char)),
             500
         )
     );

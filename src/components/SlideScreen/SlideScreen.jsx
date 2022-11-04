@@ -1,6 +1,7 @@
 import "./slide_screen.css";
-import { mdiCloseCircle } from "@mdi/js";
-import Icon from "@mdi/react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function SlideScreen({
     children,
@@ -21,7 +22,7 @@ export default function SlideScreen({
         >
             {closeButton && (
                 <button className="close-screen" onClick={close}>
-                    <Icon path={mdiCloseCircle} />
+                    <FontAwesomeIcon icon={faXmarkCircle} />
                 </button>
             )}
             <div className="screen-content">{children}</div>

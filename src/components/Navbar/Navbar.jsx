@@ -1,11 +1,11 @@
 import { useState } from "react";
 import CharacterProfile from "../CharacterProfile/CharacterProfile";
-import Icon from "@mdi/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    mdiInformation,
-    mdiCloseCircle,
-    mdiDotsHorizontalCircle,
-} from "@mdi/js";
+    faCircleQuestion,
+    faXmarkCircle,
+    faEllipsis,
+} from "@fortawesome/free-solid-svg-icons";
 import "./navbar.css";
 
 export default function Navbar({ characters, open_info }) {
@@ -24,7 +24,7 @@ export default function Navbar({ characters, open_info }) {
     return (
         <nav className={`navbar ${shown ? "" : "hidden"}`}>
             <div className="sidebar-control-wrapper">
-                <Icon path={shown ? mdiCloseCircle : mdiDotsHorizontalCircle} />
+                <FontAwesomeIcon icon={shown ? faXmarkCircle : faEllipsis} />
                 <input
                     type="checkbox"
                     className="sidebar-control"
@@ -42,7 +42,7 @@ export default function Navbar({ characters, open_info }) {
                 </div>
             </div>
             <button className="nav-button" onClick={open_info}>
-                <Icon path={mdiInformation} />
+                <FontAwesomeIcon icon={faCircleQuestion} />
             </button>
         </nav>
     );

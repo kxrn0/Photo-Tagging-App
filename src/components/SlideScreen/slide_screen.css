@@ -36,8 +36,11 @@
     right: 2rem;
     width: 2rem;
     height: 2rem;
+    font-size: 1.75rem;
     border: none;
     border-radius: 100%;
+    display: grid;
+    place-items: center;
 }
 
 .slide-screen.hidden {
@@ -46,4 +49,14 @@
 
 .slide-screen.shown {
     top: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .slide-screen .close-screen {
+        top: .5rem;
+        right: .5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 1rem;
+    }
 }

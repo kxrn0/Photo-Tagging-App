@@ -370,7 +370,6 @@ function App() {
             </SlideScreen>
             <Navbar
                 characters={chars}
-                user={{ name: "By Me", loggedIn: false }}
                 open_info={open_info}
             />
             <main>

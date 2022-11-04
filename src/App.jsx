@@ -1,16 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-
 import touhou from "./assets/yoki.jpg";
 import Navbar from "./components/Navbar/Navbar";
 import SlideScreen from "./components/SlideScreen/SlideScreen";
 import CharacterProfile from "./components/CharacterProfile/CharacterProfile";
 import Pointer from "./components/Pointer/Pointer";
 import Toasts from "./components/Toasts/Toasts";
-
+import Loading from "./components/Loading/Loading";
+import Underlink from "./components/Underelink/Underlink";
+import { nanoid } from "nanoid";
 import { initializeApp } from "firebase/app";
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    getFirestore,
+    orderBy,
+    query,
+    limit,
+} from "firebase/firestore";
+import config from "./firebase.config";
 
 import "./style.css";
-import { nanoid } from "nanoid";
 
 const names = [
     "Reimu Hakurei",
@@ -26,25 +38,9 @@ const names = [
     "Yukari Yakumo",
 ];
 
-import Loading from "./components/Loading/Loading";
-import Underlink from "./components/Underelink/Underlink";
-
-import {
-    addDoc,
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    getFirestore,
-    orderBy,
-    query,
-    limit,
-} from "firebase/firestore";
-import config from "./firebase.config";
-
 function App() {
     const [startScreenIsShown, setStartScreenIsShown] = useState(true);
-    const [chars, setChars] = useState(select_characters);
+    const [chars, setChars] = useState(() => select_characters());
     const [pointerOn, setPointerOn] = useState(false);
     const imageRef = useRef(null);
     const menuRef = useRef(null);
@@ -163,8 +159,6 @@ function App() {
 
         querySnapshot.forEach((user) => topUsers.push(user.data()));
 
-        console.log(topUsers);
-
         setLeaderboard(topUsers);
 
         setUserIn(true);
@@ -251,7 +245,7 @@ function App() {
             <Pointer shown={pointerOn} />
             <Toasts toasts={toasts} remove_toast={remove_toast} />
             <div
-                className={`characters-menu ${pointerOn ? "hidden" : ""}`}
+                className="characters-menu"
                 ref={menuRef}
                 style={
                     pointerOn
@@ -367,6 +361,7 @@ function App() {
                                 type="text"
                                 id="player-name"
                                 name="player-name"
+                                maxlenght="16"
                             />
                         </label>
                         <button type="submit">Submit</button>
